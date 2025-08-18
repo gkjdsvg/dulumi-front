@@ -1,15 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { MapPin, Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Palanquin } from "next/font/google"
+import { useRouter } from "next/navigation"
 
-export default function Component() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+export default function LoginPage() {
+    const router = useRouter();
+    const [isLogin, setIsLogin] = useState(true)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [username, setUsername] = useState("")
+
+
+    const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        try {
+            const response = await fetch("http://localhost:8087/login-api", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password, username }),
+            });
+            
+            if (!response.ok) {
+                throw new Error("Login failed");
+            }
+
+            const data = await response.json();
+            console.log("Login successful:", data);
+
+            router.push("/notice"); //로그인 성공 시 notice 페이지로 이동
+
+        } catch (error) {
+            console.error("Error during login:", error);
+        }
+    }
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12">
@@ -51,19 +83,37 @@ export default function Component() {
           {isLogin ? (
             <form className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-black font-medium">
-                  이메일
+                <Label htmlFor="username" className="text-black font-medium">
+                    아이디
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-black" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="이메일을 입력하세요"
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-black" />
+                    <Input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="아이디를 입력하세요"
                     className="pl-11 h-12 bg-white border-[#DCD3FF] text-black focus:border-[#C8A2C8] rounded-xl"
-                  />
+                    />
                 </div>
-              </div>
+            </div>
+                <div className="space-y-2">
+                    <Label htmlFor="email" className="text-black font-medium">
+                        이메일
+                    </Label>
+                    <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-black" />
+                        <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="이메일을 입력하세요"
+                        className="pl-11 h-12 bg-white border-[#DCD3FF] text-black focus:border-[#C8A2C8] rounded-xl"
+                        />
+                    </div>
+                </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-black font-medium">
@@ -74,6 +124,8 @@ export default function Component() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="비밀번호를 입력하세요"
                     className="pl-11 pr-11 h-12 bg-white border-[#DCD3FF] text-black focus:border-[#C8A2C8] rounded-xl"
                   />
@@ -100,10 +152,10 @@ export default function Component() {
                 </button>
               </div>
 
-              <Button className="w-full bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent h-12 text-lg font-semibold rounded-xl transition-all">
+              <Button type="button" onClick={handleLogin} className="w-full bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent h-12 text-lg font-semibold rounded-xl transition-all">
                 로그인
               </Button>
-            </form>
+        </form>
           ) : (
             /* Sign Up Form */
             <form className="space-y-6">

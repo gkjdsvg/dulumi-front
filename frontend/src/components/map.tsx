@@ -33,7 +33,7 @@ interface Place {
   position: { top: string; left: string }
 }
 
-export default function Component() {
+export default function MapPage() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
 

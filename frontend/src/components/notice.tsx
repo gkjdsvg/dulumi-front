@@ -6,7 +6,11 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 
-export default function Component() {
+export default function NoticePage() {
+    const login = () => {
+        window.location.href = "/login";
+    };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -26,10 +30,10 @@ export default function Component() {
               <Button variant="ghost" className="text-black hover:text-black hover:bg-white">
                 공지사항
               </Button>
-              <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent">
+              <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent" onClick={login}>
                 로그인
               </Button>
-              <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent">
+              <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent" onClick={login}>
                 회원가입
               </Button>
             </div>
