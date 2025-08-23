@@ -5,11 +5,48 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function NoticePage() {
-    const login = () => {
-        window.location.href = "/login";
+
+  const [notices, setNotices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const login = () => {
+      router.push("/login");
+  };
+
+  const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const input = document.querySelector<HTMLInputElement>("input[name='keyword']");
+    if (input) {
+    router.push(`notice/search?keyword=${encodeURIComponent(input.value)}`);
+  }
+
+  };
+
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const res = await fetch("http://localhost:8087/api/notice", {
+          method: "POST", // 서버에서 @PostMapping("/api/notice") 이라서 POST 요청
+        });
+        if (!res.ok) throw new Error("공지 불러오기 실패");
+
+        const data = await res.json();
+        setNotices(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
+
+    fetchNotices();
+  }, []);
+
+  if (loading) return <p>로딩 중...</p>;
 
   return (
     <div className="min-h-screen bg-white">
@@ -61,10 +98,13 @@ export default function NoticePage() {
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-black" />
               <Input
+                name="keyword"
                 placeholder="공지사항을 검색해보세요..."
                 className="pl-12 h-14 bg-white border-[#DCD3FF] text-lg focus:border-[#C8A2C8] text-black rounded-2xl shadow-lg"
               />
-              <Button className="absolute right-2 top-2 bg-[#DCD3FF] hover:bg-white hover:border-[#DCD3FF] border border-transparent text-black h-10 px-6 rounded-xl transition-all">
+              <Button 
+                onClick={handleSearch}
+                className="absolute right-2 top-2 bg-[#DCD3FF] hover:bg-white hover:border-[#DCD3FF] border border-transparent text-black h-10 px-6 rounded-xl transition-all">
                 검색
               </Button>
             </div>
@@ -96,168 +136,50 @@ export default function NoticePage() {
         <div className="max-w-5xl mx-auto">
           <div className="space-y-6">
             {/* Notice Item 1 */}
-            <Card className="border border-[#DCD3FF] hover:border-[#C8A2C8] transition-all duration-300 shadow-lg">
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge className="bg-[#C8A2C8] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#C8A2C8] border border-transparent transition-all">
-                        중요
-                      </Badge>
-                      <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
-                        서비스 업데이트
-                      </Badge>
-                    </div>
-                    <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
-                      새로운 지도 기능 업데이트 안내
-                    </h3>
-                    <p className="text-black mb-4 leading-relaxed">
-                      실시간 위치 공유 기능과 학생 할인 정보가 추가되었습니다. 더욱 편리해진 두루미를 경험해보세요.
-                    </p>
-                    <div className="flex items-center space-x-6 text-black">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">2024.01.15</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Eye className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">1,234</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-3 h-3 bg-[#C8A2C8] rounded-full ml-6"></div>
-                </div>
-              </CardContent>
-            </Card>
+            <h1 className="text-2xl font-bold mb-4">공지사항</h1>
 
-            {/* Notice Item 2 */}
-            <Card className="border border-[#DCD3FF] hover:border-[#C8A2C8] transition-all duration-300 shadow-lg">
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
-                        이벤트
-                      </Badge>
-                    </div>
-                    <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
-                      신학기 맞이 특별 이벤트 진행
-                    </h3>
-                    <p className="text-black mb-4 leading-relaxed">
-                      3월 한 달간 두루미 이용자를 위한 특별 할인 혜택과 이벤트를 준비했습니다.
-                    </p>
-                    <div className="flex items-center space-x-6 text-black">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">2024.01.12</span>
+              {notices.length === 0 ? (
+                <p className="text-gray-500">등록된 공지가 없습니다.</p>
+              ) : (
+                notices.map((notice, idx) => (
+                  <Card
+                    key={idx}
+                    className="border border-[#DCD3FF] hover:border-[#C8A2C8] transition-all duration-300 shadow-lg"
+                  >
+                    <CardContent className="p-8">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-4">
+                            <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
+                              이벤트
+                            </Badge>
+                          </div>
+                          <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
+                            {notice.title}
+                          </h3>
+                          <p className="text-black mb-4 leading-relaxed">
+                            {notice.content}
+                          </p>
+                          <div className="flex items-center space-x-6 text-black">
+                            <div className="flex items-center space-x-2">
+                              <Calendar className="w-4 h-4 text-[#C8A2C8]" />
+                              <span className="text-sm">
+                                {notice.createdAt?.slice(0, 10) || "날짜 없음"}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Eye className="w-4 h-4 text-[#C8A2C8]" />
+                              <span className="text-sm">{notice.views || 0}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="w-3 h-3 bg-[#DCD3FF] rounded-full ml-6"></div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Eye className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">856</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-3 h-3 bg-[#DCD3FF] rounded-full ml-6"></div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Notice Item 3 */}
-            <Card className="border border-[#DCD3FF] hover:border-[#C8A2C8] transition-all duration-300 shadow-lg">
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
-                        점검 안내
-                      </Badge>
-                    </div>
-                    <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
-                      정기 서버 점검 안내 (1월 20일)
-                    </h3>
-                    <p className="text-black mb-4 leading-relaxed">
-                      서비스 안정성 향상을 위한 정기 점검이 진행됩니다. 점검 시간 동안 서비스 이용이 제한될 수 있습니다.
-                    </p>
-                    <div className="flex items-center space-x-6 text-black">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">2024.01.10</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Eye className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">642</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-3 h-3 bg-[#DCD3FF] rounded-full ml-6"></div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Notice Item 4 */}
-            <Card className="border border-[#DCD3FF] hover:border-[#C8A2C8] transition-all duration-300 shadow-lg">
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
-                        기타
-                      </Badge>
-                    </div>
-                    <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
-                      개인정보 처리방침 개정 안내
-                    </h3>
-                    <p className="text-black mb-4 leading-relaxed">
-                      개인정보보호법 개정에 따른 개인정보 처리방침이 변경되었습니다. 자세한 내용을 확인해주세요.
-                    </p>
-                    <div className="flex items-center space-x-6 text-black">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">2024.01.08</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Eye className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">423</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-3 h-3 bg-[#DCD3FF] rounded-full ml-6"></div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Notice Item 5 */}
-            <Card className="border border-[#DCD3FF] hover:border-[#C8A2C8] transition-all duration-300 shadow-lg">
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
-                        서비스 업데이트
-                      </Badge>
-                    </div>
-                    <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
-                      모바일 앱 버전 2.1.0 출시
-                    </h3>
-                    <p className="text-black mb-4 leading-relaxed">
-                      더욱 빨라진 지도 로딩 속도와 새로운 UI/UX가 적용된 모바일 앱이 출시되었습니다.
-                    </p>
-                    <div className="flex items-center space-x-6 text-black">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">2024.01.05</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Eye className="w-4 h-4 text-[#C8A2C8]" />
-                        <span className="text-sm">789</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-3 h-3 bg-[#DCD3FF] rounded-full ml-6"></div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
 
           {/* Pagination */}
           <div className="flex items-center justify-center space-x-4 mt-16">

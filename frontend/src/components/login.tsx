@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useState } from "react"
+import { useState, useEffect } from "react"
 import { MapPin, Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,7 +16,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [username, setUsername] = useState("")
-
+    const [token, setToken] = useState<string | null>(null);
 
     const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -31,7 +31,7 @@ export default function LoginPage() {
             
             if (!response.ok) {
                 throw new Error("Login failed");
-            }
+            } 
 
             const data = await response.json();
             console.log("Login successful:", data);
@@ -42,6 +42,27 @@ export default function LoginPage() {
             console.error("Error during login:", error);
         }
     }
+
+    useEffect(() => {
+      if (!token)  return;
+
+      const eventSource = new EventSource(`http://localhost:8087/api/notification/subscribe?token=${token}`);
+
+      eventSource.onopen = () => {
+        console.log("✅ sse 연결 성공!");
+      };
+      
+      eventSource.onmessage = (event) => {
+        console.log("New message:", event.data);
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource error:", error);
+        eventSource.close();
+      };
+
+      return () => eventSource.close();
+    }, [token]);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12">
