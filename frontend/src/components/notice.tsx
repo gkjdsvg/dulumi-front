@@ -67,12 +67,12 @@ export default function NoticePage() {
               <Button variant="ghost" className="text-black hover:text-black hover:bg-white">
                 공지사항
               </Button>
-              <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent" onClick={login}>
+              {/* <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent" onClick={login}>
                 로그인
               </Button>
               <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent" onClick={login}>
                 회원가입
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

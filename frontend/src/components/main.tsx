@@ -4,8 +4,15 @@ import { MapPin, Bell, Search, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation";
 
 export default function MainPage() {
+  const router = useRouter();
+
+  const loginPage = () => {
+    router.push("/login");
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -26,7 +33,9 @@ export default function MainPage() {
                 공지사항
               </Button>
               {/* 6. 로그인 - 소프트 바이올렛 배경, 호버시 흰색 배경에 소프트 바이올렛 테두리 */}
-              <Button className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent">
+              <Button 
+                onClick={loginPage}
+                className="bg-[#DCD3FF] text-black hover:bg-white hover:border-[#DCD3FF] border border-transparent">
                 로그인
               </Button>
               {/* 6. 회원가입 - 소프트 바이올렛 배경, 호버시 흰색 배경에 소프트 바이올렛 테두리 */}

@@ -17,7 +17,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
+import "react-kakao-maps-sdk";
 
 // 타입 정의 추가
 interface Place {
@@ -36,6 +37,8 @@ interface Place {
 export default function MapPage() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const mapRef = useRef<HTMLDivElement>(null);
+
 
   const places: Place[] = [
     {

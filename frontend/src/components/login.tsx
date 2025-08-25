@@ -36,7 +36,7 @@ export default function LoginPage() {
             const data = await response.json();
             console.log("Login successful:", data);
 
-            router.push("/notice"); //로그인 성공 시 notice 페이지로 이동
+            router.push("/menu"); //로그인 성공 시 notice 페이지로 이동
 
         } catch (error) {
             console.error("Error during login:", error);
