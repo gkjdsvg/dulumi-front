@@ -36,11 +36,19 @@ export default function LoginPage() {
             const data = await response.json();
             console.log("Login successful:", data);
 
-            router.push("/menu"); //로그인 성공 시 notice 페이지로 이동
+            router.push("/dashboard"); //로그인 성공 시 dashboard 페이지로 이동
 
         } catch (error) {
             console.error("Error during login:", error);
         }
+    }
+
+    const googleLogin = () => {
+      router.push("http://localhost:8087/oauth2/authorization/google");
+    }
+
+    const kakaoLogin = () => {
+      router.push("https://kauth.kakao.com/oauth/authorize?client_id=60ac35d59e973175afc8d85d80eecff8&redirect_uri=http://localhost:8080/login/oauth2/code/kakao&response_type=code");
     }
 
     useEffect(() => {
@@ -73,9 +81,9 @@ export default function LoginPage() {
             <div className="w-12 h-12 bg-[#DCD3FF] rounded-2xl flex items-center justify-center">
               <MapPin className="w-7 h-7 text-black" />
             </div>
-            <h1 className="text-3xl font-bold text-black">CampusMap</h1>
+            <h1 className="text-3xl font-bold text-black">Dulumi</h1>
           </div>
-          <p className="text-black text-lg">{isLogin ? "다시 만나서 반가워요!" : "캠퍼스 라이프를 시작해보세요"}</p>
+          <p className="text-black text-lg">{isLogin ? "다시 만나서 반가워요!" : "두루미를 시작해보세요"}</p>
         </div>
 
         {/* Auth Card */}
@@ -311,10 +319,12 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-6 space-y-3">
-              <Button className="w-full bg-white border border-[#DCD3FF] text-black hover:bg-[#DCD3FF] h-12 rounded-xl transition-all">
+              <Button 
+                onClick={googleLogin}
+                className="w-full bg-white border border-[#DCD3FF] text-black hover:bg-[#DCD3FF] h-12 rounded-xl transition-all">
                 구글로 {isLogin ? "로그인" : "회원가입"}
               </Button>
-              <Button className="w-full bg-white border border-[#DCD3FF] text-black hover:bg-[#DCD3FF] h-12 rounded-xl transition-all">
+              <Button onClick={kakaoLogin} className="w-full bg-white border border-[#DCD3FF] text-black hover:bg-[#DCD3FF] h-12 rounded-xl transition-all">
                 카카오로 {isLogin ? "로그인" : "회원가입"}
               </Button>
             </div>

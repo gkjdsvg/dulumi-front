@@ -151,7 +151,7 @@ export default function NoticePage() {
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-4">
                             <Badge className="bg-[#DCD3FF] text-black px-3 py-1 rounded-full text-sm hover:bg-white hover:border-[#DCD3FF] border border-transparent transition-all">
-                              이벤트
+                              공지
                             </Badge>
                           </div>
                           <h3 className="text-2xl font-bold text-black mb-3 hover:text-[#C8A2C8] cursor-pointer transition-colors">
